@@ -1,0 +1,60 @@
+ionic start elite-schedule-app sidemenu --type=ionic-angular
+
+ionic serve
+
+generate a page: ionic generate page tournaments
+
+new page must be added to 'declarations' and 'entryComponents' in app.module.ts
+rootPage in app.components.ts
+goto a page: stack this.nav.push(TournamentsPage); (NavController) //navigation stack
+
+goBack this.nav.pop()
+
+toggle menu: menuToggle
+
+toolbar -> generic, navbar -> specific
+
+Pass data between pages
+- pass like this this.navCtrl.push(TeamDetailPage, team);
+- import NavParams, this.navParams.data;
+
+Ion-tabs cannot be put in ion-content
+Hight issue -> Just put ion-navbar in
+
+Pass data to the tab from the page: [rootParams] ahihi
+
+Position of icon <ion-buttons end></ion-buttons> //the 'end' thing
+
+Comeback home but still have a BACK button -> this.nav.popToRoot() OMG!!!
+
+Tab page wanna comehome??? -> coz a tab has its own navigation stack this.nav.parent.parent.popToRoot()
+
+Android listitem NO ARROW: theme/variables.scss $item-md-detail-push-show: true; <ion-list>
+    <button detail-push>
+
+persistent="true" in app.html togglemenu
+
+
+-----****HTTP & Lifecycle events****-----
+Create service: import the service in app.component.ts -> providers, import HttpMOdule in app.module at imports
+Lifecycle events:
+- enter a page -> ionViewDidlLoad is called only ONCE
+- before enter a page -> ionViewWillEnter -> always fire
+- after navigated to and shown to user -> ionViewDidEnter -> always fire
+- ionViewWillLeave, ionViewDidLeave 
+- ionViewWillUnload 
+- ionViewDidUnload -> when popoff navigation stack
+
+Rxjs:
+- import 'rxjs';
+- import 'Observable' from 'rxjs/Observable'
+
+ionic loading componnet
+
+add third party library
+- npm install -g typings
+- typing install lodash --save
+
+import * as _ from 'lodash'
+
+customize css @Component({selector:})
