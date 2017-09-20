@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, AlertController, ToastController } from 'ionic-angular';
 
-import { EliteApi } from '../../shared/shared';
-import { GamePage} from '../pages';
+import { EliteApi, UserSettings } from '../../shared/shared';
+import { GamePage } from '../pages';
 import _ from 'lodash';
+import moment from 'moment';
 /**
  * Generated class for the TeamDetailPage page.
  *
@@ -19,9 +20,15 @@ export class TeamDetailPage {
 
   team: any = {};
   games: any[];
+  dateFilter: string;
+  allGames: any[];
+  isFollowing = false;
   private tourneyData: any;
+  teamStanding: any = {};
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public eliteApi: EliteApi) {
+  useDateFilter = false;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, public eliteApi: EliteApi, public alertCtrl: AlertController, public toastCtrl: ToastController, public userSettings: UserSettings) {
     this.team = this.navParams.data;
     console.log(this.team);
   }
@@ -47,6 +54,14 @@ export class TeamDetailPage {
         };
       })
       .value();
+
+    this.allGames = this.games;
+
+    this.teamStanding = _.find(this.tourneyData.standings, {
+      'teamId': this.team.id
+    });
+
+    this.userSettings.isFavoriteTeam(this.team.id).then(value => this.isFollowing = value);
   }
   getScoreDisplay(isTeam1, team1Score, team2Score) {
     if (team1Score && team2Score) {
@@ -60,11 +75,53 @@ export class TeamDetailPage {
     }
   }
 
-  gameClicked($event, game){
+  gameClicked($event, game) {
     let sourceGame = this.tourneyData.games.find(g => g.id === game.gameId);
-    
-    this.navCtrl.parent.parent.push(GamePage, sourceGame);
-  } 
 
+    this.navCtrl.parent.parent.push(GamePage, sourceGame);
+  }
+
+  dateChanged() {
+    if (this.useDateFilter) {
+      this.games = _.filter(this.games, g => moment(g.time).isSame(this.dateFilter, 'day'));
+    } else {
+      this.games = this.allGames;
+    }
+  }
+
+  getScoreWorL(game) {
+    return game.scoreDisplay ? game.scoreDisplay[0] : '';
+  }
+
+  toggleFollow() {
+    if (this.isFollowing) {
+      let confirm = this.alertCtrl.create({
+        title: 'Unfollow?',
+        message: 'Are you sure you want to unfollow?',
+        buttons: [{
+          text: 'Yes',
+          handler: () => {
+            this.isFollowing = false;
+            this.userSettings.unfavoriteTeam(this.team);
+
+            let toast = this.toastCtrl.create({
+              message: 'You have unfollowed this team',
+              duration: 3000,
+              position: 'bottom'
+            });
+
+            toast.present();
+          }
+        }, {
+          text: 'No'
+        }]
+      });
+
+      confirm.present();
+    } else {
+      this.isFollowing = true;
+      this.userSettings.favoriteTeam(this.team, this.tourneyData.tournament.id, this.tourneyData.tournament.name);
+    }
+  }
 
 }
