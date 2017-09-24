@@ -29,19 +29,8 @@ export class UserSettings {
   getAllFavorites() {
     let items = [];
 
-    // _.forIn(window.localStorage, (v, k) => {
-    //   items.push(JSON.parse(v));
-    // });
-
-    // console.log(window);
-
-    this.storage.forEach((value, key, index) => {
-      items.push(JSON.parse(value));
-
-    });
-
-    console.log(items);
-
-    return items.length ? items : null;
+    return new Promise<any>(resolve => {
+      this.storage.forEach((v, k, i) => items.push(JSON.parse(v))).then(() => resolve(items));
+    })
   }
 }

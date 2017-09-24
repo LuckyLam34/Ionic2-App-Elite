@@ -25,21 +25,12 @@ export class MyTeamsPage {
     //         },
     //         tournamentId: '3dd50aaf-6b03-4497-b074-d81703f07ee8',
     //         tournamentName: 'HC NY'
-    //     },
-    //     {
-    //         team: {
-    //             id: 829,
-    //             name: 'HC Elite',
-    //             coach: 'Michelotti'
-    //         },
-    //         tournamentId: '46ebd526-8839-476a-9ba0-8a9b2c07f3c3',
-    //         tournamentName: 'Summer Showdown'
     //     }
     // ];
     favourites = [];
 
     ionViewDidLoad() {
-        this.favourites = this.userSettings.getAllFavorites();
+        this.userSettings.getAllFavorites().then(data => this.favourites = data);
     }
 
     goToTournaments() {
