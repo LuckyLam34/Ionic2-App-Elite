@@ -22,9 +22,10 @@ export class TeamsPage {
 
   private allTeams: any;
   private allTeamDivisions: any;
+  private initialList = [];
 
   teams = [];
-
+  searchText: string = '';
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public eliteApi: EliteApi, public loadingCtrl: LoadingController) {
   }
@@ -46,6 +47,8 @@ export class TeamsPage {
           .value();
 
         loader.dismiss();
+
+        this.initialList = this.allTeamDivisions;
       })
     })
 
@@ -56,4 +59,20 @@ export class TeamsPage {
     this.navCtrl.push(TeamHomePage, team);
   }
 
+  updateTeams() {
+    let queryTextLower = this.searchText.toLowerCase();
+    let filteredTeams = [];
+    _.forEach(this.allTeamDivisions, td => {
+      let teams = _.filter(td.divisionTeams, t => (<any>t).name.toLowerCase().includes(queryTextLower));
+      if (teams.length) {
+        filteredTeams.push({ divisionName: td.divisionName, divisionTeams: teams });
+      }
+    });
+    // console.log('filterTeams: ' + filteredTeams);
+    this.allTeamDivisions = filteredTeams;
+  }
+
+  cancelFilter() {
+    this.allTeamDivisions = this.initialList;
+  }
 }

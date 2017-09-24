@@ -29,7 +29,7 @@ export class MyTeamsPage {
     // ];
     favourites = [];
 
-    ionViewDidLoad() {
+    ionViewDidEnter() {
         this.userSettings.getAllFavorites().then(data => this.favourites = data);
     }
 

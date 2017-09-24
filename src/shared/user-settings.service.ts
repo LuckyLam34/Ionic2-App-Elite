@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
+import { Events } from 'ionic-angular';
 import _ from 'lodash';
 
 @Injectable()
 export class UserSettings {
-  constructor(private storage: Storage) {
+  constructor(private storage: Storage,
+    private events: Events) {
 
   }
 
@@ -16,10 +18,12 @@ export class UserSettings {
     };
 
     this.storage.set(team.id.toString(), JSON.stringify(item));
+    this.events.publish('favorites:changed');
   }
 
   unfavoriteTeam(team) {
     this.storage.remove(team.id);
+    this.events.publish('favorites:changed');
   }
 
   isFavoriteTeam(teamId) {
